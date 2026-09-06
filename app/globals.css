@@ -1,0 +1,97 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --qubink-navy: #082f3f;
+  --qubink-teal: #00a99d;
+  --qubink-mint: #42d6bd;
+  --qubink-softmint: #e9fbf7;
+  --qubink-ice: #f6fafa;
+  --qubink-dark: #102a33;
+  --qubink-muted: #6b7c83;
+}
+
+body {
+  background-color: #f6fafa;
+  color: #102a33;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: transparent;
+}
+
+h1, h2, h3, h4, h5, h6, .font-heading {
+  font-family: 'Outfit', sans-serif;
+  letter-spacing: -0.02em;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f6fafa;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Premium Card Base */
+.qubink-card {
+  background: #ffffff;
+  border: 1px solid rgba(8, 47, 63, 0.08);
+  border-radius: 18px;
+  box-shadow: 0 4px 20px -2px rgba(8, 47, 63, 0.05);
+  transition: all 0.2s ease-in-out;
+}
+
+.qubink-card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px -4px rgba(8, 47, 63, 0.12);
+  border-color: rgba(0, 169, 157, 0.3);
+}
+
+/* Glassmorphism subtle headers */
+.qubink-glass {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(8, 47, 63, 0.06);
+}
+
+/* Soft Mint Glow */
+.qubink-gradient-teal {
+  background: linear-gradient(135deg, #00a99d 0%, #42d6bd 100%);
+}
+
+.qubink-gradient-navy {
+  background: linear-gradient(145deg, #082f3f 0%, #102a33 100%);
+}
+
+/* Full-viewport Modal Overlay ensuring 100% coverage over navbar and header without top edge-blur leaks */
+.qubink-modal-backdrop {
+  position: fixed !important;
+  top: -20px !important;
+  left: -20px !important;
+  right: -20px !important;
+  bottom: -20px !important;
+  width: calc(100vw + 40px) !important;
+  height: calc(100vh + 40px) !important;
+  z-index: 999999 !important;
+  background-color: rgba(8, 47, 63, 0.78) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  overflow-y: auto !important;
+  padding: 20px !important;
+  box-sizing: border-box !important;
+}
+

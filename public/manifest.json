@@ -1,0 +1,39 @@
+{
+  "name": "Qubink - Print & Xerox Marketplace",
+  "short_name": "Qubink",
+  "description": "Location-based printing, Xerox, and document service marketplace. Print. Collect. Delivered.",
+  "start_url": "/customer/home",
+  "display": "standalone",
+  "background_color": "#F6FAFA",
+  "theme_color": "#082F3F",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/logo.jpeg",
+      "sizes": "192x192",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "/logo.jpeg",
+      "sizes": "512x512",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "/logo.jpeg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "maskable"
+    }
+  ],
+  "share_target": {
+    "action": "/customer/upload",
+    "method": "GET",
+    "enctype": "application/x-www-form-urlencoded",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  },
+  "categories": ["business", "productivity", "utilities"]
+}
