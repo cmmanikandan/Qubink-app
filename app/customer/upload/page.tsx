@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useApp } from '@/lib/store';
 import { uploadCustomerDocumentToStorageAndDb } from '@/lib/supabase';
@@ -19,9 +19,10 @@ import {
   CheckCircle2,
   AlertCircle,
   Sparkles,
+  Loader2,
 } from 'lucide-react';
 
-export default function CustomerUploadPage() {
+function CustomerUploadContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const initialShopId = searchParams.get('shopId');
@@ -525,5 +526,20 @@ export default function CustomerUploadPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function CustomerUploadPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="p-12 text-center text-xs text-qubink-muted flex items-center justify-center gap-2">
+          <Loader2 className="w-4 h-4 animate-spin text-qubink-teal" />
+          <span>Loading upload portal...</span>
+        </div>
+      }
+    >
+      <CustomerUploadContent />
+    </Suspense>
   );
 }

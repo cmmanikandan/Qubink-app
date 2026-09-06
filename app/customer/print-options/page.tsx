@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useApp } from '@/lib/store';
 import {
@@ -13,9 +13,10 @@ import {
   Shield,
   Layers,
   Sparkles,
+  Loader2,
 } from 'lucide-react';
 
-export default function PrintOptionsPage() {
+function PrintOptionsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const shopIdParam = searchParams.get('shopId');
@@ -334,5 +335,20 @@ export default function PrintOptionsPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function PrintOptionsPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="p-12 text-center text-xs text-qubink-muted flex items-center justify-center gap-2">
+          <Loader2 className="w-4 h-4 animate-spin text-qubink-teal" />
+          <span>Loading print options...</span>
+        </div>
+      }
+    >
+      <PrintOptionsContent />
+    </Suspense>
   );
 }

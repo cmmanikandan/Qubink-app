@@ -1,12 +1,12 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useApp } from '@/lib/store';
 import confetti from 'canvas-confetti';
-import { CheckCircle2, QrCode, ArrowRight, Home, FileText } from 'lucide-react';
+import { CheckCircle2, QrCode, ArrowRight, Home, FileText, Loader2 } from 'lucide-react';
 
-export default function OrderSuccessPage() {
+function OrderSuccessContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const orderId = searchParams.get('orderId');
@@ -84,5 +84,20 @@ export default function OrderSuccessPage() {
         </button>
       </div>
     </div>
+  );
+}
+
+export default function OrderSuccessPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="p-12 text-center text-xs text-qubink-muted flex items-center justify-center gap-2">
+          <Loader2 className="w-4 h-4 animate-spin text-qubink-teal" />
+          <span>Confirming order details...</span>
+        </div>
+      }
+    >
+      <OrderSuccessContent />
+    </Suspense>
   );
 }
