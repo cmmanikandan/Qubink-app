@@ -35,6 +35,22 @@ export default function ShopLoginPage() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
+  // If already logged in as shop, auto-redirect to dashboard
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('qubink_active_user');
+      const activeRole = localStorage.getItem('qubink_active_role');
+      if (stored && (activeRole === 'shop')) {
+        try {
+          const u = JSON.parse(stored);
+          if (u?.id || u?.email) {
+            router.replace('/shop-portal');
+          }
+        } catch {}
+      }
+    }
+  }, [router]);
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) {

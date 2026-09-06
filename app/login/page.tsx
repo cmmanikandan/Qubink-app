@@ -28,6 +28,23 @@ export default function CustomerLoginPage() {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
+  // If user is already logged in, redirect directly to Home
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('qubink_active_user');
+      if (stored) {
+        try {
+          const u = JSON.parse(stored);
+          if (u?.id || u?.email) {
+            router.replace('/home');
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }
+    }
+  }, [router]);
+
   const handleGoogleSignIn = async () => {
     setLoading(true);
     setErrorMsg(null);

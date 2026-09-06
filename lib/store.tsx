@@ -201,6 +201,18 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         }
       }
 
+      const storedCart = localStorage.getItem('qubink_active_cart');
+      if (storedCart) {
+        try {
+          const parsedCart = JSON.parse(storedCart);
+          if (parsedCart && Array.isArray(parsedCart.documents)) {
+            setCart(parsedCart);
+          }
+        } catch (e) {
+          console.error('Error parsing stored cart:', e);
+        }
+      }
+
       const storedLoc = localStorage.getItem('qubink_user_location');
       if (storedLoc) {
         try {
@@ -515,6 +527,19 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setCart((prev) => ({ ...prev, notes }));
   };
 
+  // Automatically persist cart to localStorage whenever it changes
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      if (cart.documents.length > 0 || cart.shopId) {
+        try {
+          localStorage.setItem('qubink_active_cart', JSON.stringify(cart));
+        } catch (e) {
+          console.warn('Could not cache cart:', e);
+        }
+      }
+    }
+  }, [cart]);
+
   const clearCart = () => {
     setCart({
       shopId: null,
@@ -525,6 +550,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       addressId: addresses.find((a) => a.isDefault)?.id || addresses[0]?.id || null,
       notes: '',
     });
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('qubink_active_cart');
+    }
   };
 
   const calculatePricing = (

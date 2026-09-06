@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { useApp } from '@/lib/store';
@@ -79,6 +79,16 @@ export default function NewOrderPage() {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [step, setStep] = useState<1 | 2>(1);
+
+  // Synchronize browser history so hardware/browser back button returns from Step 2 to Step 1
+  useEffect(() => {
+    const handlePopState = () => {
+      setStep(1);
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
   const [previewDoc, setPreviewDoc] = useState<DocumentItem | null>(null);
   const [showAddressModal, setShowAddressModal] = useState(false);
   const [newLabel, setNewLabel] = useState<'Home' | 'College' | 'Office' | 'Other'>('Home');
@@ -372,13 +382,35 @@ export default function NewOrderPage() {
     <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-gray-200/70 pb-4">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-qubink-navy font-heading">
-            {step === 1 ? 'Configure Print Order' : 'Fulfillment & Payment'}
-          </h1>
-          <p className="text-xs sm:text-sm text-qubink-muted">
-            {step === 1 ? 'Upload files and customize your print specifications.' : 'Choose how you want to receive and pay for your prints.'}
-          </p>
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => {
+              if (step === 2) {
+                if (typeof window !== 'undefined' && window.history.state?.step === 2) {
+                  window.history.back();
+                } else {
+                  setStep(1);
+                }
+              } else if (typeof window !== 'undefined' && window.history.length > 1) {
+                router.back();
+              } else {
+                router.push('/home');
+              }
+            }}
+            className="w-10 h-10 rounded-2xl bg-white border border-gray-200 hover:bg-gray-50 flex items-center justify-center text-qubink-navy transition-colors shadow-2xs shrink-0 cursor-pointer"
+            aria-label="Go Back"
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </button>
+          <div>
+            <h1 className="text-xl sm:text-3xl font-extrabold text-qubink-navy font-heading">
+              {step === 1 ? 'Configure Print Order' : 'Fulfillment & Payment'}
+            </h1>
+            <p className="text-xs sm:text-sm text-qubink-muted">
+              {step === 1 ? 'Upload files and customize your print specifications.' : 'Choose how you want to receive and pay for your prints.'}
+            </p>
+          </div>
         </div>
 
         <div className="flex items-center gap-2 bg-white px-3 py-2 rounded-xl border border-gray-200 text-xs self-start sm:self-auto">
@@ -1194,6 +1226,9 @@ export default function NewOrderPage() {
                 type="button"
                 onClick={() => {
                   if (cart.documents.length === 0) { alert('Please upload at least one document.'); return; }
+                  if (typeof window !== 'undefined') {
+                    window.history.pushState({ step: 2 }, '');
+                  }
                   setStep(2);
                 }}
                 disabled={cart.documents.length === 0}

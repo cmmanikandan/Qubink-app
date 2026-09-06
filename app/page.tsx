@@ -1,7 +1,8 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import QubinkLogo from '@/components/Logo';
 import {
   Printer,
@@ -18,9 +19,46 @@ import {
   Check,
   QrCode,
   Layers,
+  User,
 } from 'lucide-react';
 
 export default function LandingPage() {
+  const router = useRouter();
+  const [loggedInUser, setLoggedInUser] = useState<{ name: string; role: string } | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('qubink_active_user');
+      const activeRole = localStorage.getItem('qubink_active_role');
+      if (stored) {
+        try {
+          const u = JSON.parse(stored);
+          if (u?.id || u?.email) {
+            const role = activeRole || u.role || 'customer';
+            setLoggedInUser({ name: u.fullName || u.name || 'User', role });
+            // Auto redirect so returning users don't have to sign in again
+            if (role === 'shop') {
+              router.replace('/shop-portal');
+            } else if (role === 'admin') {
+              router.replace('/admin');
+            } else {
+              router.replace('/home');
+            }
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }
+    }
+  }, [router]);
+
+  const dashboardUrl =
+    loggedInUser?.role === 'shop'
+      ? '/shop-portal'
+      : loggedInUser?.role === 'admin'
+      ? '/admin'
+      : '/home';
+
   return (
     <div className="min-h-screen bg-[#F6FAFA] text-[#102A33] selection:bg-qubink-teal selection:text-white flex flex-col justify-between">
       {/* 1. TOP NAVIGATION BAR */}
@@ -48,20 +86,33 @@ export default function LandingPage() {
           </nav>
 
           <div className="flex items-center gap-2 sm:gap-3">
-            <Link
-              href="/shop/register"
-              className="hidden sm:flex px-3.5 py-2 rounded-xl border border-qubink-teal/30 text-xs font-bold text-qubink-teal hover:bg-qubink-softmint/50 transition-colors items-center gap-1.5"
-            >
-              <Store className="w-3.5 h-3.5" />
-              <span>Create Shop Account</span>
-            </Link>
-            <Link
-              href="/login"
-              className="px-4 py-2 rounded-xl bg-qubink-teal text-white text-xs font-bold hover:bg-qubink-teal/90 shadow-xs transition-all flex items-center gap-1.5 hover:translate-y-[-1px]"
-            >
-              <span>Sign In</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
+            {loggedInUser ? (
+              <Link
+                href={dashboardUrl}
+                className="px-4 py-2 rounded-xl bg-qubink-teal text-white text-xs font-bold hover:bg-qubink-teal/90 shadow-xs transition-all flex items-center gap-1.5 hover:translate-y-[-1px]"
+              >
+                <User className="w-3.5 h-3.5" />
+                <span>Go to Dashboard ({loggedInUser.name.split(' ')[0]})</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            ) : (
+              <>
+                <Link
+                  href="/shop/register"
+                  className="hidden sm:flex px-3.5 py-2 rounded-xl border border-qubink-teal/30 text-xs font-bold text-qubink-teal hover:bg-qubink-softmint/50 transition-colors items-center gap-1.5"
+                >
+                  <Store className="w-3.5 h-3.5" />
+                  <span>Create Shop Account</span>
+                </Link>
+                <Link
+                  href="/login"
+                  className="px-4 py-2 rounded-xl bg-qubink-teal text-white text-xs font-bold hover:bg-qubink-teal/90 shadow-xs transition-all flex items-center gap-1.5 hover:translate-y-[-1px]"
+                >
+                  <span>Sign In</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </header>
